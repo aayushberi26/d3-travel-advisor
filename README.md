@@ -6,5 +6,9 @@ https://qz.com/779121/airbnb-vs-hotel-cost-comparison-you-can-rent-an-entire-hom
 
 Latitude and Longitude of major cities: http://www.artscipub.com/info/latlonofmajorcities.asp
 
+Average airfare from major cities: https://www.transtats.bts.gov/AverageFare/
+
+
+
 Still need to change city names to match between files (will want to remove states)
 
