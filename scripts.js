@@ -1,13 +1,17 @@
-var planeFare,pubTransport,taxiPrices,mealCosts;
+var planeFare;
+var pubTransport;
+var taxiPrices;
+var mealCosts;
+var lodgingData;
+var locationData;
 
 d3.queue()
-    .defer(d3.csv,'AverageFare.csv')
-    .defer(d3.csv,'publicTransportPrices.csv')
-    .defer(d3.csv,'taxiPrices.csv')
-    .defer(d3.csv,'avg_meal_cost.csv')
-    .await( function (error,planeFare,pubTransport,taxiPrices,mealCosts) {
-    	planeFare = planeFare;
-    	pubTransport = pubTransport;
-    	taxiPrices = taxiPrices;
-    	mealCosts = mealCosts;
+    .defer(d3.csv, )
+    .await( function (error, planeRaw, publicTransportRaw, taxiRaw, mealRaw, lodgingRaw, locationRaw, aggregateData) {
+        planeFare = planeRaw;
+        pubTransport = publicTransportRaw;
+        taxiPrices = taxiRaw;
+        mealCosts = mealRaw;
+        lodgingData = lodgingRaw;
+        locationData = locationRaw;
     });
