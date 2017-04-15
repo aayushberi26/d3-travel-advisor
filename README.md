@@ -8,7 +8,7 @@ Latitude and Longitude of major cities: http://www.artscipub.com/info/latlonofma
 
 Average airfare from major cities: https://www.transtats.bts.gov/AverageFare/
 
+Average cost of restaurant meal: https://www.numbeo.com/cost-of-living/country_result.jsp?country=United+States
 
 
-Still need to change city names to match between files (will want to remove states)
 
