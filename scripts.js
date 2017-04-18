@@ -51,15 +51,17 @@ function showMap(svg) {
 
 function makeBarChart(cities,attribute,elementid){
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
-    var text = svg.append('text')
-    .attr("x",50)
-    .attr('y',50);
+
 
     var padding = 20;
     width = 300;
     height= 200;
     var svg = d3.select(elementid).append("svg").attr("height",200).attr("width",300);
     var barWidth = width / cities.length;
+    svg.append('text')
+    .attr("x",width-100)
+    .attr('y',50)
+    .attr('id','cityname');
 
     var yScale = d3.scaleLinear().domain([30,
         d3.max(cities, function (city) {
@@ -75,7 +77,10 @@ var bar = svg.selectAll("g")
         .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; })
         .attr("y", function (d){return yScale(d[attribute])})
         .attr("width", barWidth - 2)
-        .attr("height", function (d){return yScale(0) - yScale(d[attribute])});
+        .attr("height", function (d){return yScale(0) - yScale(d[attribute])})
+        .on("mouseover", function (city) {
+            svg.select('#cityname').text(city.city);
+        });
         
 
 
