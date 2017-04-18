@@ -1,6 +1,7 @@
 var aggregateData;
 var stateMapData;
 var cityData = [];
+var nestedData;
 
 var projection = d3.geoAlbersUsa().scale(75);
 var pathGenerator = d3.geoPath().projection(projection);
@@ -27,6 +28,11 @@ d3.queue()
                 totalCost: 0 // to be calculated
             }
             cityData.push(city);
+            nestedData = d3.nest()
+            .key(function (d) {
+                return d["city"];
+            })
+            .entries(cityData);
         });
 
         calculateTotalCost();
@@ -86,28 +92,52 @@ var bar = svg.selectAll("g")
 
 }
 
-function makePie(svg, dataset) {
-    var radius = 100;
-    svg.append('g')
-        .attr('transform','translate(100, 100)');
+// code adapted from http://zeroviscosity.com/d3-js-step-by-step/step-1-a-basic-pie-chart
+function makePie(svg_id, dataset, city, height, width) {
+    var cityObject;
+    var cityArray = [];
+    var ignoredKeys = ["airbnb", "cheapMeal", "city", "latitude", "longitude", "publicTransport", "totalCost"];
+    for (var i = 0; i < dataset.length; i++) {
+        if (dataset[i]["key"] == city) {
+            cityObject = dataset[i];
+            break;
+        }
+    }
+    console.log(cityObject)
+    for (var key in cityObject["values"][0]) {
+        if(ignoredKeys.indexOf(key) == -1) {
+            console.log(key + ', ' + cityObject["values"][0][key])
+            cityArray.push(cityObject["values"][0][key])
+        }
+    }
+    //console.log(cityArray)
+    var radius = Math.min(height, width) / 2;
+    var svg = d3.select(svg_id)
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .append('g')
+        .attr('transform', 'translate(' + (width / 2) +  ',' + (height / 2) + ')');
 
-    var color = d3.scaleOrdinal(d3.schemeCategory20b);
+    //var color = d3.scaleOrdinal(d3.schemeCategory20b);
+    var color = d3.scaleOrdinal()
+        .range(['#A60F2B', '#648C85', '#B3F2C9', '#528C18', '#C3F25C']);
 
     var arc = d3.arc()
         .innerRadius(0)
         .outerRadius(radius);
 
     var pie = d3.pie()
-        .value(function (d) {return d["City"]; })
+        .value(function (d) {return d; })
         .sort(null);
 
     var path = svg.selectAll('path')
-        .data(pie(dataset))
+        .data(pie(cityArray))
         .enter()
         .append('path')
         .attr('d', arc)
         .attr('fill', function (d, i) {
-            color(d.data["city"]);
+            return color(d.data);
         });
     }
 
