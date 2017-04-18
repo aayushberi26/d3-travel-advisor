@@ -44,3 +44,35 @@ function showMap(svg) {
         return pathGenerator(state);
     });
 }
+
+function makePie(svg, dataset) {
+    var radius = 100;
+    svg.append('g')
+        .attr('transform','translate(100, 100)');
+
+    var color = d3.scaleOrdinal(d3.schemeCategory20b);
+
+    var arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(radius);
+
+    var pie = d3.pie()
+        .value(function (d) {return d["City"]; })
+        .sort(null);
+
+    var path = svg.selectAll('path')
+        .data(pie(dataset))
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', function (d, i) {
+            color(d.data["city"]);
+        });
+
+
+
+}
+
+
+
+
