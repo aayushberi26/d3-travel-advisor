@@ -48,6 +48,39 @@ function showMap(svg) {
     });
 }
 
+
+function makeBarChart(cities,attribute,elementid){
+    cities.sort(function (a,b){return b[attribute] - a[attribute]});
+    var text = svg.append('text')
+    .attr("x",50)
+    .attr('y',50);
+
+    var padding = 20;
+    width = 300;
+    height= 200;
+    var svg = d3.select(elementid).append("svg").attr("height",200).attr("width",300);
+    var barWidth = width / cities.length;
+
+    var yScale = d3.scaleLinear().domain([30,
+        d3.max(cities, function (city) {
+             return city[attribute];
+         }) ])
+    .range([height-padding,padding]);
+
+var bar = svg.selectAll("g")
+      .data(cities)
+    .enter().append("g");
+
+    bar.append("rect").attr("class", "bar")
+        .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; })
+        .attr("y", function (d){return yScale(d[attribute])})
+        .attr("width", barWidth - 2)
+        .attr("height", function (d){return yScale(0) - yScale(d[attribute])});
+        
+
+
+}
+
 function makePie(svg, dataset) {
     var radius = 100;
     svg.append('g')
@@ -124,4 +157,5 @@ function calculateTotalCost(airbnb=true, cheapMeal=true, publicTransit=true) {
     });
 
 }
+
 
