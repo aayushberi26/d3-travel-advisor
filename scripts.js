@@ -40,6 +40,7 @@ d3.queue()
         var svg = d3.select("#svgMap"); // We can rename these
         showMap(svg);
         plotCities(svg);
+        makeBarChart(cityData,'airbnb','body');
     });
 
 function showMap(svg) {
