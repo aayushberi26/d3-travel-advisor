@@ -39,8 +39,11 @@ d3.queue()
 
         var svg = d3.select("#svgMap"); // We can rename these
         showMap(svg);
+        addSlider(svg, d3.select("#slider"));
         plotCities(svg);
         makeBarChart(cityData,'airbnb','body');
+
+        // makePie("circle", cityData, "New York", ["taxiCost", "hotel", "airfare", "cheapMeal"]);
     });
 
 function showMap(svg) {
@@ -55,6 +58,27 @@ function showMap(svg) {
     });
 }
 
+function addSlider(svg, sliderDiv) {
+    // Is there a better way to do this?
+    var variables = ["totalCost", "airfare", "airbnb", "hotel", "expensiveMeal", "cheapMeal", "publicTransport", "taxiCost"];
+
+    sliderDiv
+    .append("div").text(variables[0]).attr("id", "sliderLabel")
+    .append("div")
+    .append("input").attr("type", "range").attr("class", "slider")
+    .attr("min", 0)
+    .attr("max", 700)
+    .attr("step", "100")
+    .attr("value", 0)
+    .on("input", function () {
+        var val = Number(this.value);
+        d3.select("sliderLabel").text(variables[val/100]); // text isn't changing
+        console.log(variables[val/100]);
+
+        plotCities(svg, variables[val/100]);
+    });
+
+}
 
 function makeBarChart(cities,attribute,elementid){
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
@@ -75,8 +99,8 @@ function makeBarChart(cities,attribute,elementid){
          }) ])
     .range([height-padding,padding]);
 
-var bar = svg.selectAll("g")
-      .data(cities)
+    var bar = svg.selectAll("g")
+    .data(cities)
     .enter().append("g");
 
     bar.append("rect").attr("fill", '#4169e1')
@@ -154,7 +178,7 @@ function makePie(svg_id, dataset, city, height, width) {
         .attr('fill', function (d, i) {
             return color(d.data);
         });
-    }
+}
 
 
 // variable: string containing class property
@@ -179,7 +203,7 @@ function plotCities(svg, variable = "totalCost") {
     .attr("fill", "#48f")
     .on("mouseover", function (city) {
         var xy = projection([city.longitude, city.latitude]);
-        svg.select("#CityName").text(city.city)
+        svg.select("#CityName").text(city.city + ": " + city[variable])
         .attr("x", xy[0]+10)
         .attr("y", xy[1]);
     })
@@ -209,11 +233,12 @@ function showCityDetails(svg, city) {
 
 // modifies cityData, and sets all totalCost attributes based on user preference
 function calculateTotalCost(airbnb=true, cheapMeal=true, publicTransit=true) {
+    // 3 meals a day, 2 transit rides, 2 airfare flights?
     cityData.forEach(function (d) {
-        var cost = d.airfare;
+        var cost = 2*d.airfare;
         cost += airbnb? d.airbnb: d.hotel;
-        cost += cheapMeal? d.cheapMeal: d.expensiveMeal;
-        cost += publicTransit? d.publicTransport: d.taxiCost;
+        cost += cheapMeal? 3*d.cheapMeal: 3*d.expensiveMeal;
+        cost += publicTransit? 2*d.publicTransport: 2*d.taxiCost;
 
         d.totalCost = cost;
     });
