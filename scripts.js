@@ -58,14 +58,13 @@ function showMap(svg) {
 function makeBarChart(cities,attribute,elementid){
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
 
-
     var padding = 20;
     width = 300;
     height= 200;
     var svg = d3.select(elementid).append("svg").attr("height",200).attr("width",300);
     var barWidth = width / cities.length;
     svg.append('text')
-    .attr("x",width-100)
+    .attr("x",width-110)
     .attr('y',50)
     .attr('id','cityname');
 
@@ -79,17 +78,32 @@ var bar = svg.selectAll("g")
       .data(cities)
     .enter().append("g");
 
-    bar.append("rect").attr("class", "bar")
+    bar.append("rect").attr("fill", '#4169e1')
         .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; })
         .attr("y", function (d){return yScale(d[attribute])})
         .attr("width", barWidth - 2)
         .attr("height", function (d){return yScale(0) - yScale(d[attribute])})
         .on("mouseover", function (city) {
             svg.select('#cityname').text(city.city);
+        })
+        .attr('class',function (city){
+            var name = city.city.replace(/ /g,'');
+            return name;
+        })
+        .on('mouseenter', function (city){
+            var name = city.city.replace(/ /g,'');
+            d3.selectAll('.' + name).attr('fill','yellow');
+        })
+        .on('mouseleave', function (city){
+            var name = city.city.replace(/ /g,'');
+            d3.selectAll('.' + name).attr('fill','#4169e1');
         });
-        
 
-
+    svg.append('line')
+    .attr('x1',0).attr('x2',width-2)
+    .attr('y1',height).attr('y2',height)
+    .attr('stroke','black')
+    .attr('stroke-width',10);
 }
 
 // code adapted from http://zeroviscosity.com/d3-js-step-by-step/step-1-a-basic-pie-chart
@@ -160,8 +174,8 @@ function plotCities(svg, variable = "totalCost") {
     .attr("r", function (city) { return radiusScale(city[variable]); })
     .attr("cx", function (city) { return projection([city.longitude, city.latitude])[0]; })
     .attr("cy", function (city) { return projection([city.longitude, city.latitude])[1]; })
-    .style("opacity", 0.7)
-    .style("fill", "#48f")
+    .attr("opacity", 0.7)
+    .attr("fill", "#48f")
     .on("mouseover", function (city) {
         var xy = projection([city.longitude, city.latitude]);
         svg.select("#CityName").text(city.city)
@@ -173,7 +187,19 @@ function plotCities(svg, variable = "totalCost") {
     })
     .on("click", function (city) { // is this outer function necessary?
         showCityDetails(svg, city);
-    });
+    })
+    .attr('class',function (city){
+            var name = city.city.replace(/ /g,'');
+            return name;
+    })
+    .on('mouseenter', function (city){
+            var name = city.city.replace(/ /g,'');
+            d3.selectAll('.' + name).attr('fill','yellow');
+    })
+    .on('mouseleave', function (city){
+            var name = city.city.replace(/ /g,'');
+            d3.selectAll('.' + name).attr('fill','#4169e1');
+        });
 }
 
 function showCityDetails(svg, city) {
