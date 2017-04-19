@@ -107,6 +107,9 @@ var bar = svg.selectAll("g")
     .attr('stroke-width',10);
 }
 
+
+
+/*
 // code adapted from http://zeroviscosity.com/d3-js-step-by-step/step-1-a-basic-pie-chart
 function makePie(svg_id, dataset, city, height, width) {
     var cityObject;
@@ -155,6 +158,108 @@ function makePie(svg_id, dataset, city, height, width) {
             return color(d.data);
         });
     }
+*/
+
+
+
+function formatData(rawData, cityName, desiredFields) {
+    // later desiredFields will be a selection
+    var rawCity;
+    var formattedCity = [];
+    var color = d3.scaleOrdinal()
+        .range(['#d7191c','#fdae61','#ffffbf','#abdda4','#2b83ba']);
+    rawData.forEach(function (d) {
+        if(d.city == cityName) {
+            rawCity = d;
+        }
+    })
+    for (var i = 0; i < desiredFields.length; i ++) {
+        var formattedData = {
+            "label": desiredFields[i],
+            "value": rawCity[desiredFields[i]],
+            "color": color(desiredFields[i])
+        };
+        formattedCity.push(formattedData)
+    }
+    console.log(formattedCity);
+    return formattedCity;
+}
+
+function makePie(div, rawData, cityName, desiredFields) {
+    // code adapted from http://d3pie.org/
+    document.getElementById(div).innerHTML = "";
+    var pie = new d3pie(div, {
+    "header": {
+        "title": {
+            "text": "Cost of " + cityName,
+            "fontSize": 24,
+            "font": "open sans"
+        },
+        "subtitle": {
+            "text": "",
+            "color": "#999999",
+            "fontSize": 12,
+            "font": "open sans"
+        },
+        "titleSubtitlePadding": 9
+    },
+    "footer": {
+        "color": "#999999",
+        "fontSize": 10,
+        "font": "open sans",
+        "location": "bottom-left"
+    },
+    "size": {
+        "canvasWidth": 700,
+        "pieInnerRadius": "44%",
+        "pieOuterRadius": "90%"
+    },
+    "data": {
+        "sortOrder": "value-desc",
+        "content": formatData(rawData, cityName, desiredFields)
+    },
+    "labels": {
+        "outer": {
+            "pieDistance": 32
+        },
+        "inner": {
+            "hideWhenLessThanPercentage": 3
+        },
+        "mainLabel": {
+            "fontSize": 11
+        },
+        "percentage": {
+            "color": "#ffffff",
+            "decimalPlaces": 0
+        },
+        "value": {
+            "color": "#adadad",
+            "fontSize": 11
+        },
+        "lines": {
+            "enabled": true
+        },
+        "truncation": {
+            "enabled": true
+        }
+    },
+    "effects": {
+        "pullOutSegmentOnClick": {
+            "effect": "linear",
+            "speed": 400,
+            "size": 8
+        }
+    },
+    "misc": {
+        "gradient": {
+            "enabled": true,
+            "percentage": 100
+        }
+    }
+});
+
+};
+
 
 
 // variable: string containing class property
@@ -202,6 +307,7 @@ function plotCities(svg, variable = "totalCost") {
             d3.selectAll('.' + name).attr('fill','#4169e1');
         });
 }
+
 
 function showCityDetails(svg, city) {
     console.log(city.city);
