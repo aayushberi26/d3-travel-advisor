@@ -132,7 +132,22 @@ function addButtons(svg) {
 //     });
 // }
 
+var bar1attr;
+var bar2attr;
+var bar3attr;
+var bar4attr;
+
 function makeBarChart(cities,attribute,elementid){
+    if (elementid.slice(-1) == '1') {
+        bar1attr = attribute;
+    } else if (elementid.slice(-1) == '2') {
+        bar2attr = attribute;
+    } else if (elementid.slice(-1) == '3') {
+        bar3attr = attribute;
+    } else if (elementid.slice(-1) == '4') {
+        bar4attr = attribute;
+    }
+
     document.getElementById(elementid.substr(1)).innerHTML = "";
 
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
@@ -144,10 +159,11 @@ function makeBarChart(cities,attribute,elementid){
     var svg = d3.select(elementid).append("svg").attr("height",300).attr("width",350);
     var barWidth = (width - 20) / cities.length;
     svg.append('text')
-    .attr("x",width-120)
+    .attr("x",width-170)
     .attr('y',80)
     .attr('font-size','20px')
-    .attr('class','cityname');
+    .attr('class', elementid.substr(1) + "cityname");
+    // .attr('class','cityname');
 
     svg.append('text')
     .attr('x',20)
@@ -180,7 +196,10 @@ function makeBarChart(cities,attribute,elementid){
         .attr("width", barWidth - 2)
         .attr("height", function (d){return yScale(0) - yScale(Number(d[attribute]))})
         .on("mouseover", function (city) {
-            d3.selectAll('.cityname').text(city.city);
+            d3.selectAll('.bar1cityname').text(city.city + ": $" + city[bar1attr].toFixed(2));
+            d3.selectAll('.bar2cityname').text(city.city + ": $" + city[bar2attr].toFixed(2));
+            d3.selectAll('.bar3cityname').text(city.city + ": $" + city[bar3attr].toFixed(2));
+            d3.selectAll('.bar4cityname').text(city.city + ": $" + city[bar4attr].toFixed(2));
         })
         .attr('class',function (city){
             var name = city.city.replace(/ /g,'');
@@ -465,7 +484,6 @@ function plotCities(svg, variable = "totalCost") {
     .attr("fill", "#48f")
     .on("mouseover", function (city) {
         document.getElementById("cityLabel").innerHTML = "Total cost to " + city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2);
-        d3.selectAll('.cityname').text(city.city);
         updatePie(city.city);
         selectedCityName = city.city;
     })
@@ -474,9 +492,6 @@ function plotCities(svg, variable = "totalCost") {
         document.getElementById("cityLabel").innerHTML = "";
     })
     */
-    // .on("click", function (city) {
-    //     showCityDetails(svg, city);
-    // })
     .attr('class',function (city){
             var name = city.city.replace(/ /g,'');
             return name;
@@ -486,6 +501,12 @@ function plotCities(svg, variable = "totalCost") {
         d3.selectAll('circle').attr('fill','#4169e1');
         d3.selectAll('rect').attr('fill', '#4169e1');
         d3.selectAll('.' + name).attr('fill','yellow');
+
+
+        d3.selectAll('.bar1cityname').text(city.city + ": $" + city[bar1attr].toFixed(2));
+        d3.selectAll('.bar2cityname').text(city.city + ": $" + city[bar2attr].toFixed(2));
+        d3.selectAll('.bar3cityname').text(city.city + ": $" + city[bar3attr].toFixed(2));
+        d3.selectAll('.bar4cityname').text(city.city + ": $" + city[bar4attr].toFixed(2));
     })
     /*
     .on('mouseleave', function (city){
