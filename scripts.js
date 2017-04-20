@@ -184,6 +184,35 @@ function makePie(svg_id, dataset, city, height, width) {
     }
 */
 
+function humanizeLabels(label) {
+
+    switch(label) {
+        case 'airfare':
+            return "Airfare";
+            break;
+        case 'airbnb':
+            return "Airbnb (per night)";
+            break;
+        case 'cheapMeal':
+            return "Cheap meal";
+            break;
+        case 'expensiveMeal':
+            return "Expensive meal";
+            break;
+        case 'hotel':
+            return "Hotel (per night)";
+            break;
+        case 'publicTransport':
+            return "Public Transportation (one way)";
+            break;
+        case 'taxiCost':
+            return "Taxi Cost (10 mile ride)";
+            break;
+        default:
+            return " ";
+            break;
+    }
+}
 
 
 function formatData(rawData, cityName, desiredFields) {
@@ -209,18 +238,32 @@ function formatData(rawData, cityName, desiredFields) {
     return formattedCity;
 }
 
+function totalFromFields(rawData, cityName, desiredFields) {
+    var total = 0;
+    var rawCity;
+    rawData.forEach(function (d) {
+        if(d.city == cityName) {
+            rawCity = d;
+        };
+    });
+    for (var i = 0; i < desiredFields.length; i ++) {
+        total += Number(rawCity[desiredFields[i]]);
+    };
+    return total;
+}
+
 function makePie(div, rawData, cityName, desiredFields) {
     // code adapted from http://d3pie.org/
     document.getElementById(div).innerHTML = "";
     var pie = new d3pie(div, {
     "header": {
         "title": {
-            "text": "Cost of " + cityName,
+            "text": cityName,
             "fontSize": 24,
             "font": "open sans"
         },
         "subtitle": {
-            "text": "",
+            "text": "   ",
             "color": "#999999",
             "fontSize": 12,
             "font": "open sans"
@@ -235,7 +278,7 @@ function makePie(div, rawData, cityName, desiredFields) {
     },
     "size": {
         "canvasWidth": 700,
-        "pieInnerRadius": "44%",
+        "pieInnerRadius": "55%",
         "pieOuterRadius": "90%"
     },
     "data": {
@@ -279,10 +322,33 @@ function makePie(div, rawData, cityName, desiredFields) {
             "enabled": true,
             "percentage": 100
         }
+    },
+    "callbacks": {
+        "onload": null,
+        "onMouseoverSegment": function(info) {
+            document.getElementById("circleLabel").innerHTML = humanizeLabels(info["data"]["label"]) + ", $" + parseFloat(Math.round(Number(info["data"]["value"]) * 100) / 100).toFixed(2);
+        },
+        "onMouseoutSegment": function () {
+            document.getElementById("circleLabel").innerHTML = " ";
+        },
+        "onClickSegment": null
     }
 });
-
-};
+    var svg = d3.select("#circle_svg");
+    svg.append("text")
+        .attr("x", "350")
+        .attr("y", "275")
+        .attr("id", "circleLabel")
+        .attr("style", "font-size: 14px;")
+        .attr("text-anchor", "middle");
+    svg.append("text")
+        .attr("x", "80")
+        .attr("y", "80")
+        .attr("id", "totalCostLabel")
+        .attr("style", "font-size: 18px;")
+        .attr("text-anchor", "middle")
+        .text("Total Cost: $" + parseFloat(Math.round(Number(totalFromFields(rawData, cityName, desiredFields)) * 100) / 100).toFixed(2));
+}; 
 
 
 // variable: string containing class property
