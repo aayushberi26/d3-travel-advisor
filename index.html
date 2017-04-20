@@ -3,6 +3,7 @@
 <title>Project 2, wfq2 ab2466 jf586</title>
 <link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<link rel="stylesheet" href="bootstrap.min.css">
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="http://d3js.org/topojson.v2.min.js"></script>
 <script src="d3pie.js"></script>
@@ -20,9 +21,37 @@ h3 {margin-bottom:3px;}
 </style>
 </head>
 <body>
-<h3>Project 2, wfq2, ab2466, jf586</h3>
+<h1 style="text-align: center">Your vacation starts here!</h1>
+<div class = "container">
+<div class= "col-lg-1"></div>
+<div class= "col-lg-11">
 
 <form name="selection">
+    <div class="inputset">
+    <h3>Destination City</h3>
+    <select name="cities">
+        <option value="New York">New York</option>
+        <option value="San Franscisco">San Franscisco</option>
+        <option value="Los Angeles">Los Angeles</option>
+        <option value="Miami">Miami</option>
+        <option value="Orlando">Orlando</option>
+        <option value="Honolulu">Honolulu</option>
+        <option value="Austin">Austin</option>
+        <option value="Sacramento">Sacramento</option>
+        <option value="Salt Lake City">Salt Lake City</option>
+        <option value="San Diego">San Diego</option>
+        <option value="Nashville">Nashville</option>
+        <option value="Boston">Boston</option>
+        <option value="Washington DC">Washington DC</option>
+        <option value="Seattle">Seattle</option>
+        <option value="Portland">Portland</option>
+        <option value="New Orleans">New Orleans</option>
+        <option value="Chicago">Chicago</option>
+        <option value="Denver">Denver</option>
+    </select>
+    <br>
+    <br>
+    </div>
 	<div class="inputset">
 	<h3>Type of Stay</h3>
 	<input type="radio" name="airbnb_hotel" id="airbnb" value="airbnb" checked="checked"> Airbnb<br>
@@ -39,17 +68,34 @@ h3 {margin-bottom:3px;}
 	<input type="radio" name="transit_type" value="taxiCost" > Taxi <br>
 </div>
 
+
 </form>
+</div>
+</div>
 
 
-<div id = "slider"></div>
-<svg height="600" width="900" id="svgMap" style="display:inline-block;"></svg>
-<div id="circle" style="display:inline-block"></div>
-<div></div>
+<!--<div id = "slider"></div>-->
+<div class="container-fluid" style="margin-bottom: -55px;">
+    <div class="col-lg-6">
+        <svg height="400" width="525" id="svgMap" style="display:inline-block;"></svg>
+    </div>
+    <div class = "col-lg-5">
+        <div id="circle" style="display:inline-block"></div>
+    </div>
+<!--<div></div>-->
+</div>
+<div class="col-lg-3">
 <div class="barchart" id="bar1"></div>
+</div>
+<div class="col-lg-3">
 <div class="barchart" id="bar2"></div>
+</div>
+<div class="col-lg-3">
 <div class="barchart" id="bar3"></div>
+</div>
+<div class="col-lg-3">
 <div class='barchart' id="bar4"></div>
-
+</div>
+<div class="col-lg-3">
 </body>
 </html>

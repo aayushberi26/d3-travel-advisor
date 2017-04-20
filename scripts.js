@@ -152,8 +152,8 @@ function makeBarChart(cities,attribute,elementid){
 
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
 
-    var padding = 20;
-    var width = 300;
+    var padding = 15;
+    var width = 230;
     var height= 300;
     var bottompadding = 100;
     var svg = d3.select(elementid).append("svg").attr("height",300).attr("width",350);
@@ -168,8 +168,8 @@ function makeBarChart(cities,attribute,elementid){
     svg.append('text')
     .attr('x',20)
     .attr('y',50)
-    .text(attribute.charAt(0).toUpperCase() + attribute.slice(1))
-    .attr('font-size','30px');
+    .text(humanizeLabels(attribute.charAt(0) + attribute.slice(1)))
+    .attr('font-size','24px');
 
     svg.append('text')
     .text('Cost')
@@ -220,7 +220,7 @@ function makeBarChart(cities,attribute,elementid){
         */
 
     svg.append('line')
-    .attr('x1',64).attr('x2',342)
+    .attr('x1',64).attr('x2',274)
     .attr('y1',height-padding).attr('y2',height-padding)
     .attr('stroke','black')
     .attr('stroke-width',5);
@@ -380,9 +380,10 @@ function makePie(div, rawData, cityName, desiredFields) {
         "location": "bottom-left"
     },
     "size": {
+        "canvasHeight": 450,
         "canvasWidth": 700,
-        "pieInnerRadius": "55%",
-        "pieOuterRadius": "90%"
+        "pieInnerRadius": "50%",
+        "pieOuterRadius": "85%"
     },
     "data": {
         "sortOrder": "value-desc",
