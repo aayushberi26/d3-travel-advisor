@@ -41,7 +41,9 @@ d3.queue()
         showMap(svg);
         addSlider(svg, d3.select("#slider"));
         plotCities(svg);
-        makeBarChart(cityData,'airbnb','body');
+        makeBarChart(cityData,'airbnb','#bar1');
+        makeBarChart(cityData,'expensiveMeal','#bar2');
+        makeBarChart(cityData,'publicTransport','#bar3');
 
         makePie("circle", cityData, "New York", ["taxiCost", "hotel", "airfare", "cheapMeal"]);
     });
@@ -91,7 +93,7 @@ function makeBarChart(cities,attribute,elementid){
     var barWidth = (width - 20) / cities.length;
     svg.append('text')
     .attr("x",width-120)
-    .attr('y',50)
+    .attr('y',80)
     .attr('font-size','20px')
     .attr('class','cityname');
 
@@ -111,7 +113,7 @@ function makeBarChart(cities,attribute,elementid){
     .attr('y',height/2);
 
 
-    var yScale = d3.scaleLinear().domain([30,
+    var yScale = d3.scaleLinear().domain([0,
         d3.max(cities, function (city) {
              return city[attribute];
          }) ])
@@ -127,7 +129,7 @@ function makeBarChart(cities,attribute,elementid){
         .attr("width", barWidth - 2)
         .attr("height", function (d){return yScale(0) - yScale(d[attribute])})
         .on("mouseover", function (city) {
-            svg.selectAll('.cityname').text(city.city);
+            d3.selectAll('.cityname').text(city.city);
         })
         .attr('class',function (city){
             var name = city.city.replace(/ /g,'');
@@ -144,7 +146,7 @@ function makeBarChart(cities,attribute,elementid){
 
     svg.append('line')
     .attr('x1',20).attr('x2',width-2)
-    .attr('y1',height).attr('y2',height)
+    .attr('y1',height-padding).attr('y2',height-padding)
     .attr('stroke','black')
     .attr('stroke-width',10);
 }
