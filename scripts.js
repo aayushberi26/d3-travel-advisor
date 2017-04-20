@@ -39,7 +39,8 @@ d3.queue()
 
         var svg = d3.select("#svgMap"); // We can rename these
         showMap(svg);
-        addSlider(svg, d3.select("#slider"));
+        addButtons(svg);
+        // addSlider(svg, d3.select("#slider"));
         plotCities(svg);
         makeBarChart(cityData,'airbnb','body');
 
@@ -58,27 +59,64 @@ function showMap(svg) {
     });
 }
 
-function addSlider(svg, sliderDiv) {
-    // Is there a better way to do this?
-    var variables = ["totalCost", "airfare", "airbnb", "hotel", "expensiveMeal", "cheapMeal", "publicTransport", "taxiCost"];
+function addButtons(svg) {
+    // might want to make global variables?
+    var isAirbnb = true;
+    var isCheapMeal = true;
+    var isPublicTransit = true;
 
-    sliderDiv
-    .append("div").text(variables[0]).attr("id", "sliderLabel")
-    .append("div")
-    .append("input").attr("type", "range").attr("class", "slider")
-    .attr("min", 0)
-    .attr("max", 700)
-    .attr("step", "100")
-    .attr("value", 0)
-    .on("input", function () {
-        var val = Number(this.value);
-        d3.select("sliderLabel").text(variables[val/100]); // text isn't changing
-        console.log(variables[val/100]);
+    var rad = document.selection.airbnb_hotel;
+    for(var i = 0; i < rad.length; i++) {
+        rad[i].onclick = function() {
+            isAirbnb = this.value == "airbnb" ? true : false;
+            calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
+            plotCities(svg);
+        };
+    }
 
-        plotCities(svg, variables[val/100]);
-    });
+    rad = document.selection.meal_type;
+    for(var i = 0; i < rad.length; i++) {
+        rad[i].onclick = function() {
+            isCheapMeal = this.value == "cheap" ? true : false;
+            calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
+            plotCities(svg);
+        };
+    }
+
+    rad = document.selection.transit_type;
+    for(var i = 0; i < rad.length; i++) {
+        rad[i].onclick = function() {
+            isPublicTransit = this.value == "public" ? true : false;
+            calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
+            plotCities(svg);
+        };
+    }
 
 }
+
+// ------- Commented out for now in case we want to do something with it --------
+// function addSlider(svg, sliderDiv) {
+//     // Is there a better way to do this?
+//     var variables = ["totalCost", "airfare", "airbnb", "hotel", "expensiveMeal", "cheapMeal", "publicTransport", "taxiCost"];
+
+//     var label = sliderDiv
+//     .append("div").text(variables[0]).attr("id", "sliderLabel");
+
+//     sliderDiv
+//     .append("div")
+//     .attr("id", "slider")
+//     .append("input").attr("type", "range").attr("class", "slider")
+//     .attr("min", 0)
+//     .attr("max", 700)
+//     .attr("step", "100")
+//     .attr("value", 0)
+//     .on("input", function () {
+//         var val = Number(this.value);
+//         // label.text(variables[val/100]); // text isn't changing
+//         console.log(variables[val/100]);
+//         plotCities(svg, variables[val/100]);
+//     });
+// }
 
 function makeBarChart(cities,attribute,elementid){
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
