@@ -50,6 +50,7 @@ d3.queue()
         makeBarChart(cityData,'airbnb','#bar1');
         makeBarChart(cityData,'cheapMeal','#bar2');
         makeBarChart(cityData,'publicTransport','#bar3');
+        makeBarChart(cityData,'airfare','#bar4');
 
         makePie("circle", cityData, "New York", ["taxiCost", "hotel", "airfare", "cheapMeal"]);
     });
@@ -163,11 +164,11 @@ function makeBarChart(cities,attribute,elementid){
     .attr('x',10)
     .attr('y',height/2);
 
+    var max = d3.max(cities, function (d){
+        return Number(d[attribute]);
+    });
 
-    var yScale = d3.scaleLinear().domain([0,
-        d3.max(cities, function (city) {
-             return city[attribute];
-         }) ])
+    var yScale = d3.scaleLinear().domain([0,max])
     .range([height-padding,bottompadding]);
 
     var bar = svg.selectAll("g")
@@ -176,9 +177,9 @@ function makeBarChart(cities,attribute,elementid){
 
     bar.append("rect").attr("fill", '#4169e1')
         .attr("transform", function(d, i) { return "translate(" + ((i * barWidth) + 20) + ",0)"; })
-        .attr("y", function (d){return yScale(d[attribute])})
+        .attr("y", function (d){return yScale(Number(d[attribute]))})
         .attr("width", barWidth - 2)
-        .attr("height", function (d){return yScale(0) - yScale(d[attribute])})
+        .attr("height", function (d){return yScale(0) - yScale(Number(d[attribute]))})
         .on("mouseover", function (city) {
             d3.selectAll('.cityname').text(city.city);
         })
@@ -445,7 +446,7 @@ function plotCities(svg, variable = "totalCost") {
     .on("mouseover", function (city) {
         d3.selectAll('.cityname').text(city.city);
         var xy = projection([city.longitude, city.latitude]);
-        svg.select("#CityName").text(city.city + ": " + city[variable])
+        svg.select("#CityName").text(city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2))
         .attr("x", xy[0]+10)
         .attr("y", xy[1]);
         updatePie(city.city);
