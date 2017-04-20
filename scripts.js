@@ -3,6 +3,11 @@ var stateMapData;
 var cityData = [];
 var nestedData;
 
+var selectedCityName;
+var isAirbnb = true;
+var isCheapMeal = true;
+var isPublicTransit = true;
+
 var projection = d3.geoAlbersUsa().scale(75);
 var pathGenerator = d3.geoPath().projection(projection);
 
@@ -43,7 +48,7 @@ d3.queue()
         // addSlider(svg, d3.select("#slider"));
         plotCities(svg);
         makeBarChart(cityData,'airbnb','#bar1');
-        makeBarChart(cityData,'expensiveMeal','#bar2');
+        makeBarChart(cityData,'cheapMeal','#bar2');
         makeBarChart(cityData,'publicTransport','#bar3');
         makeBarChart(cityData,'airfare','#bar4');
 
@@ -63,10 +68,7 @@ function showMap(svg) {
 }
 
 function addButtons(svg) {
-    // might want to make global variables?
-    var isAirbnb = true;
-    var isCheapMeal = true;
-    var isPublicTransit = true;
+    //isAirbnb, isCheapMeal, isPublicTransit are global variables
 
     var rad = document.selection.airbnb_hotel;
     for(var i = 0; i < rad.length; i++) {
@@ -74,24 +76,33 @@ function addButtons(svg) {
             isAirbnb = this.value == "airbnb" ? true : false;
             calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
             plotCities(svg);
+
+            makeBarChart(cityData,this.value,'#bar1');
+            updatePie(selectedCityName);
         };
     }
 
     rad = document.selection.meal_type;
     for(var i = 0; i < rad.length; i++) {
         rad[i].onclick = function() {
-            isCheapMeal = this.value == "cheap" ? true : false;
+            isCheapMeal = this.value == "cheapMeal" ? true : false;
             calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
             plotCities(svg);
+
+            makeBarChart(cityData,this.value,'#bar2');
+            updatePie(selectedCityName);
         };
     }
 
     rad = document.selection.transit_type;
     for(var i = 0; i < rad.length; i++) {
         rad[i].onclick = function() {
-            isPublicTransit = this.value == "public" ? true : false;
+            isPublicTransit = this.value == "publicTransport" ? true : false;
             calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
             plotCities(svg);
+
+            makeBarChart(cityData,this.value,'#bar3');
+            updatePie(selectedCityName);
         };
     }
 
@@ -122,6 +133,8 @@ function addButtons(svg) {
 // }
 
 function makeBarChart(cities,attribute,elementid){
+    document.getElementById(elementid.substr(1)).innerHTML = " ";
+
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
 
     var padding = 20;
@@ -438,30 +451,36 @@ function plotCities(svg, variable = "totalCost") {
     .attr("fill", "#48f")
     .on("mouseover", function (city) {
         document.getElementById("cityLabel").innerHTML = "Total cost " + city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2);
+        d3.selectAll('.cityname').text(city.city);
+        updatePie(city.city);
+        selectedCityName = city.city;
     })
     .on("mouseout", function (city) {
         document.getElementById("cityLabel").innerHTML = "";
     })
-    .on("click", function (city) { // is this outer function necessary?
-        showCityDetails(svg, city);
-    })
+    // .on("click", function (city) {
+    //     showCityDetails(svg, city);
+    // })
     .attr('class',function (city){
             var name = city.city.replace(/ /g,'');
             return name;
     })
     .on('mouseenter', function (city){
-            var name = city.city.replace(/ /g,'');
-            d3.selectAll('.' + name).attr('fill','yellow');
+        var name = city.city.replace(/ /g,'');
+        d3.selectAll('.' + name).attr('fill','yellow');
     })
     .on('mouseleave', function (city){
-            var name = city.city.replace(/ /g,'');
-            d3.selectAll('.' + name).attr('fill','#4169e1');
-        });
+        var name = city.city.replace(/ /g,'');
+        d3.selectAll('.' + name).attr('fill','#4169e1');
+    });
 }
 
+function updatePie(city) {
+    var transit = isPublicTransit? "publicTransport": "taxiCost"
+    var lodging = isAirbnb? "airbnb" : "hotel";
+    var meal = isCheapMeal? "cheapMeal" : "expensiveMeal";
 
-function showCityDetails(svg, city) {
-    console.log(city.city);
+    makePie("circle", cityData, city, [transit, lodging, "airfare", meal]);
 }
 
 // modifies cityData, and sets all totalCost attributes based on user preference
