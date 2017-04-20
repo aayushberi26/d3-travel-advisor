@@ -3,7 +3,7 @@ var stateMapData;
 var cityData = [];
 var nestedData;
 
-var selectedCityName;
+var selectedCityName = "New York";
 var isAirbnb = true;
 var isCheapMeal = true;
 var isPublicTransit = true;
@@ -52,7 +52,7 @@ d3.queue()
         makeBarChart(cityData,'publicTransport','#bar3');
         makeBarChart(cityData,'airfare','#bar4');
 
-        makePie("circle", cityData, "New York", ["taxiCost", "hotel", "airfare", "cheapMeal"]);
+        makePie("circle", cityData, selectedCityName, ["publicTransport", "airbnb", "airfare", "cheapMeal"]);
     });
 
 function showMap(svg) {
@@ -133,7 +133,7 @@ function addButtons(svg) {
 // }
 
 function makeBarChart(cities,attribute,elementid){
-    document.getElementById(elementid.substr(1)).innerHTML = " ";
+    document.getElementById(elementid.substr(1)).innerHTML = "";
 
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
 
@@ -141,7 +141,7 @@ function makeBarChart(cities,attribute,elementid){
     var width = 300;
     var height= 300;
     var bottompadding = 100;
-    var svg = d3.select(elementid).append("svg").attr("height",300).attr("width",300);
+    var svg = d3.select(elementid).append("svg").attr("height",300).attr("width",350);
     var barWidth = (width - 20) / cities.length;
     svg.append('text')
     .attr("x",width-120)
@@ -157,12 +157,11 @@ function makeBarChart(cities,attribute,elementid){
 
     svg.append('text')
     .text('Cost')
-    .attr('style',"writing-mode: tb;")
-    .attr("letter-spacing", "0.5em")
+    .style("text-anchor", "middle")
     .attr('font-size','20px')
-    .attr('rotate','-90')
-    .attr('x',10)
-    .attr('y',height/2);
+    .attr('x',15)
+    .attr('y',height/2+30)
+    .attr("transform","rotate(-90,15,180)");
 
     var max = d3.max(cities, function (d){
         return Number(d[attribute]);
@@ -176,7 +175,7 @@ function makeBarChart(cities,attribute,elementid){
     .enter().append("g");
 
     bar.append("rect").attr("fill", '#4169e1')
-        .attr("transform", function(d, i) { return "translate(" + ((i * barWidth) + 20) + ",0)"; })
+        .attr("transform", function(d, i) { return "translate(" + ((i * barWidth) + 64) + ",0)"; })
         .attr("y", function (d){return yScale(Number(d[attribute]))})
         .attr("width", barWidth - 2)
         .attr("height", function (d){return yScale(0) - yScale(Number(d[attribute]))})
@@ -197,10 +196,18 @@ function makeBarChart(cities,attribute,elementid){
         });
 
     svg.append('line')
-    .attr('x1',20).attr('x2',width-2)
+    .attr('x1',64).attr('x2',342)
     .attr('y1',height-padding).attr('y2',height-padding)
     .attr('stroke','black')
-    .attr('stroke-width',10);
+    .attr('stroke-width',5);
+
+    if (attribute == "publicTransport") {
+        var yAxis = d3.axisLeft(yScale).tickFormat(d3.format("$.2f"));
+        svg.append("g").attr("transform", "translate(60,0)").call(yAxis);
+    } else {
+        var yAxis = d3.axisLeft(yScale).tickFormat(d3.format("$.0f"));
+        svg.append("g").attr("transform", "translate(60,0)").call(yAxis);
+    }
 }
 
 
@@ -450,7 +457,7 @@ function plotCities(svg, variable = "totalCost") {
     .attr("opacity", 0.7)
     .attr("fill", "#48f")
     .on("mouseover", function (city) {
-        document.getElementById("cityLabel").innerHTML = "Total cost " + city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2);
+        document.getElementById("cityLabel").innerHTML = "Total cost to " + city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2);
         d3.selectAll('.cityname').text(city.city);
         updatePie(city.city);
         selectedCityName = city.city;
