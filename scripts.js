@@ -450,6 +450,7 @@ function updateCityVisuals(city) {
     d3.selectAll('.bar4cityname').text(city.city + ": $" + city[bar4attr].toFixed(2));
 
     document.getElementById("cityLabel").innerHTML = "Total cost for " + city.city + ": $" + parseFloat(Math.round(Number(city["totalCost"]) * 100) / 100).toFixed(2);
+    document.getElementById('cityselector').value = city.city;
     updatePie(city.city);
     selectedCityName = city.city;
 }
