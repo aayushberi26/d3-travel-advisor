@@ -3,7 +3,7 @@ var stateMapData;
 var cityData = [];
 var nestedData;
 
-var selectedCityName;
+var selectedCityName = "New York";
 var isAirbnb = true;
 var isCheapMeal = true;
 var isPublicTransit = true;
@@ -189,12 +189,17 @@ function makeBarChart(cities,attribute,elementid){
         })
         .on('mouseenter', function (city){
             var name = city.city.replace(/ /g,'');
+            d3.selectAll('rect').attr('fill','#4169e1');
+            d3.selectAll('circle').attr('fill', '#4169e1')
             d3.selectAll('.' + name).attr('fill','yellow');
+            updatePie(city.city);
         })
+        /*
         .on('mouseleave', function (city){
             var name = city.city.replace(/ /g,'');
             d3.selectAll('.' + name).attr('fill','#4169e1');
         });
+        */
 
     svg.append('line')
     .attr('x1',20).attr('x2',width-2)
@@ -275,7 +280,7 @@ function humanizeLabels(label) {
             return "Hotel (per night)";
             break;
         case 'publicTransport':
-            return "Public Transportation (one way)";
+            return "Public Transport (one way)";
             break;
         case 'taxiCost':
             return "Taxi Cost (10 mile ride)";
@@ -292,7 +297,7 @@ function formatData(rawData, cityName, desiredFields) {
     var rawCity;
     var formattedCity = [];
     var color = d3.scaleOrdinal()
-        .range(['#d7191c','#fdae61','#ffffbf','#abdda4','#2b83ba']);
+        .range(['#7fc97f','#beaed4','#fdc086','#ffff99','#386cb0']);
     rawData.forEach(function (d) {
         if(d.city == cityName) {
             rawCity = d;
@@ -368,7 +373,7 @@ function makePie(div, rawData, cityName, desiredFields) {
             "fontSize": 11
         },
         "percentage": {
-            "color": "#ffffff",
+            "color": "#000000",
             "decimalPlaces": 0
         },
         "value": {
@@ -383,6 +388,9 @@ function makePie(div, rawData, cityName, desiredFields) {
         }
     },
     "effects": {
+         "load": {
+            "speed": 350
+        },
         "pullOutSegmentOnClick": {
             "effect": "linear",
             "speed": 400,
@@ -391,8 +399,7 @@ function makePie(div, rawData, cityName, desiredFields) {
     },
     "misc": {
         "gradient": {
-            "enabled": true,
-            "percentage": 100
+            "enabled": false,
         }
     },
     "callbacks": {
@@ -455,9 +462,11 @@ function plotCities(svg, variable = "totalCost") {
         updatePie(city.city);
         selectedCityName = city.city;
     })
+    /*
     .on("mouseout", function (city) {
         document.getElementById("cityLabel").innerHTML = "";
     })
+    */
     // .on("click", function (city) {
     //     showCityDetails(svg, city);
     // })
@@ -467,12 +476,16 @@ function plotCities(svg, variable = "totalCost") {
     })
     .on('mouseenter', function (city){
         var name = city.city.replace(/ /g,'');
+        d3.selectAll('circle').attr('fill','#4169e1');
+        d3.selectAll('rect').attr('fill', '#4169e1');
         d3.selectAll('.' + name).attr('fill','yellow');
     })
+    /*
     .on('mouseleave', function (city){
         var name = city.city.replace(/ /g,'');
         d3.selectAll('.' + name).attr('fill','#4169e1');
     });
+    */
 }
 
 function updatePie(city) {
