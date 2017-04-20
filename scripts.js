@@ -106,6 +106,34 @@ function addButtons(svg) {
         };
     }
 
+    var selector = document.getElementById('cityselector');
+    selector.addEventListener("change", function (){
+        if (selector.value != selectedCityName){
+            selectedCityName = selector.value;
+            updatePie(selectedCityName);
+            calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
+
+        var name = selector.value.replace(/ /g,'');
+        d3.selectAll('circle').attr('fill','#4169e1');
+        d3.selectAll('rect').attr('fill', '#4169e1');
+        d3.selectAll('.' + name).attr('fill','yellow');
+
+
+        var tempcity;
+         cityData.forEach(function (d){
+            if (d.city.localeCompare(selectedCityName) == 0){
+                tempcity = d;
+            }
+        });
+
+        d3.selectAll('.bar1cityname').text(selectedCityName + ": $" + tempcity[bar1attr].toFixed(2));
+        d3.selectAll('.bar2cityname').text(selectedCityName + ": $" + tempcity[bar2attr].toFixed(2));
+        d3.selectAll('.bar3cityname').text(selectedCityName + ": $" + tempcity[bar3attr].toFixed(2));
+        d3.selectAll('.bar4cityname').text(selectedCityName + ": $" + tempcity[bar4attr].toFixed(2));
+        document.getElementById("cityLabel").innerHTML = "Total cost for " + tempcity.city + ": $" + parseFloat(Math.round(Number(tempcity.totalCost) * 100) / 100).toFixed(2)
+        }
+    });
+
 }
 
 // ------- Commented out for now in case we want to do something with it --------
@@ -337,7 +365,6 @@ function formatData(rawData, cityName, desiredFields) {
         };
         formattedCity.push(formattedData)
     }
-    console.log(formattedCity);
     return formattedCity;
 }
 
