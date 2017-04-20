@@ -84,32 +84,50 @@ function makeBarChart(cities,attribute,elementid){
     cities.sort(function (a,b){return b[attribute] - a[attribute]});
 
     var padding = 20;
-    width = 300;
-    height= 200;
-    var svg = d3.select(elementid).append("svg").attr("height",200).attr("width",300);
-    var barWidth = width / cities.length;
+    var width = 300;
+    var height= 300;
+    var bottompadding = 100;
+    var svg = d3.select(elementid).append("svg").attr("height",300).attr("width",300);
+    var barWidth = (width - 20) / cities.length;
     svg.append('text')
-    .attr("x",width-110)
+    .attr("x",width-120)
     .attr('y',50)
-    .attr('id','cityname');
+    .attr('font-size','20px')
+    .attr('class','cityname');
+
+    svg.append('text')
+    .attr('x',20)
+    .attr('y',50)
+    .text(attribute.charAt(0).toUpperCase() + attribute.slice(1))
+    .attr('font-size','30px');
+
+    svg.append('text')
+    .text('Cost')
+    .attr('style',"writing-mode: tb;")
+    .attr("letter-spacing", "0.5em")
+    .attr('font-size','20px')
+    .attr('rotate','-90')
+    .attr('x',10)
+    .attr('y',height/2);
+
 
     var yScale = d3.scaleLinear().domain([30,
         d3.max(cities, function (city) {
              return city[attribute];
          }) ])
-    .range([height-padding,padding]);
+    .range([height-padding,bottompadding]);
 
     var bar = svg.selectAll("g")
     .data(cities)
     .enter().append("g");
 
     bar.append("rect").attr("fill", '#4169e1')
-        .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; })
+        .attr("transform", function(d, i) { return "translate(" + ((i * barWidth) + 20) + ",0)"; })
         .attr("y", function (d){return yScale(d[attribute])})
         .attr("width", barWidth - 2)
         .attr("height", function (d){return yScale(0) - yScale(d[attribute])})
         .on("mouseover", function (city) {
-            svg.select('#cityname').text(city.city);
+            svg.selectAll('.cityname').text(city.city);
         })
         .attr('class',function (city){
             var name = city.city.replace(/ /g,'');
@@ -125,7 +143,7 @@ function makeBarChart(cities,attribute,elementid){
         });
 
     svg.append('line')
-    .attr('x1',0).attr('x2',width-2)
+    .attr('x1',20).attr('x2',width-2)
     .attr('y1',height).attr('y2',height)
     .attr('stroke','black')
     .attr('stroke-width',10);
@@ -306,6 +324,7 @@ function plotCities(svg, variable = "totalCost") {
     .attr("opacity", 0.7)
     .attr("fill", "#48f")
     .on("mouseover", function (city) {
+        d3.selectAll('.cityname').text(city.city);
         var xy = projection([city.longitude, city.latitude]);
         svg.select("#CityName").text(city.city + ": " + city[variable])
         .attr("x", xy[0]+10)
