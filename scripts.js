@@ -413,6 +413,12 @@ function makePie(div, rawData, cityName, desiredFields) {
 // variable: string containing class property
 function plotCities(svg, variable = "totalCost") {
     // Text element for mouseover
+    d3.select("#svgMap").append("text")
+    .attr("x", 15)
+    .attr("y", 20)
+    .attr("id", "cityLabel")
+    .attr("style", "font-size: 18px");
+
     svg.append("text")
     .attr("id", "CityName")
     .style("font-size", "16pt");
@@ -431,14 +437,10 @@ function plotCities(svg, variable = "totalCost") {
     .attr("opacity", 0.7)
     .attr("fill", "#48f")
     .on("mouseover", function (city) {
-        d3.selectAll('.cityname').text(city.city);
-        var xy = projection([city.longitude, city.latitude]);
-        svg.select("#CityName").text(city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2))
-        .attr("x", xy[0]+10)
-        .attr("y", xy[1]);
+        document.getElementById("cityLabel").innerHTML = "Total cost " + city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2);
     })
     .on("mouseout", function (city) {
-        svg.select("#CityName").text("");
+        document.getElementById("cityLabel").innerHTML = "";
     })
     .on("click", function (city) { // is this outer function necessary?
         showCityDetails(svg, city);
