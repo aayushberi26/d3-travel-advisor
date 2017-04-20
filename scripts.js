@@ -433,7 +433,7 @@ function plotCities(svg, variable = "totalCost") {
     .on("mouseover", function (city) {
         d3.selectAll('.cityname').text(city.city);
         var xy = projection([city.longitude, city.latitude]);
-        svg.select("#CityName").text(city.city + ": " + city[variable])
+        svg.select("#CityName").text(city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2))
         .attr("x", xy[0]+10)
         .attr("y", xy[1]);
     })
