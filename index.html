@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="http://d3js.org/topojson.v2.min.js"></script>
-<script src="d3pie.min.js"></script>
+<script src="d3pie.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
 <script src="scripts.js"></script>
@@ -14,7 +14,7 @@ path.state { fill: #ccc; stroke: #ccc; }
 input.slider { width: 600px; }
 rect.bar { fill: #4169e1; }
 path.state { fill: #eee; stroke: #aaa; }
-
+.barchart {display:inline-block;width:300px;height:300px;}
 </style>
 </head>
 <body>
@@ -33,7 +33,12 @@ path.state { fill: #eee; stroke: #aaa; }
 
 
 <div id = "slider"></div>
-<svg height="600" width="900" id = "svgMap"></svg>
-<div id = "circle"></div>
+<svg height="600" width="900" id="svgMap" style="display:inline-block;"></svg>
+<div id="circle" style="display:inline-block"></div>
+<div></div>
+<div class="barchart" id="bar1"></div>
+<div class="barchart" id="bar2"></div>
+<div class="barchart" id="bar3"></div>
+
 </body>
 </html>
