@@ -77,6 +77,7 @@ function addButtons(svg) {
         rad[i].onclick = function() {
             isAirbnb = this.value == "airbnb" ? true : false;
             calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
+            plotCities(svg);
 
             makeBarChart(cityData,this.value,'#bar1');
             updateCityVisuals(getSingleCity(selectedCityName));
@@ -88,6 +89,7 @@ function addButtons(svg) {
         rad[i].onclick = function() {
             isCheapMeal = this.value == "cheapMeal" ? true : false;
             calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
+            plotCities(svg);
 
             makeBarChart(cityData,this.value,'#bar2');
             updateCityVisuals(getSingleCity(selectedCityName));
@@ -99,6 +101,7 @@ function addButtons(svg) {
         rad[i].onclick = function() {
             isPublicTransit = this.value == "publicTransport" ? true : false;
             calculateTotalCost(isAirbnb, isCheapMeal, isPublicTransit);
+            plotCities(svg);
 
             makeBarChart(cityData,this.value,'#bar3');
             updateCityVisuals(getSingleCity(selectedCityName));
@@ -254,20 +257,6 @@ function formatData(rawData, cityName, desiredFields) {
     return formattedCity;
 }
 
-function totalFromFields(rawData, cityName, desiredFields) {
-    var total = 0;
-    var rawCity;
-    rawData.forEach(function (d) {
-        if(d.city == cityName) {
-            rawCity = d;
-        };
-    });
-    for (var i = 0; i < desiredFields.length; i ++) {
-        total += Number(rawCity[desiredFields[i]]);
-    };
-    return total;
-}
-
 function makePie(div, rawData, cityName, desiredFields) {
     // code adapted from http://d3pie.org/
     document.getElementById(div).innerHTML = "";
@@ -352,7 +341,7 @@ function makePie(div, rawData, cityName, desiredFields) {
         },
         "onClickSegment": null
     }
-});
+    });
     var svg = d3.select("#circle_svg");
     svg.append("text")
         .attr("x", "350")
