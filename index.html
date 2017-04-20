@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="http://d3js.org/topojson.v2.min.js"></script>
-<script src="d3pie.min.js"></script>
+<script src="d3pie.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
 <script src="scripts.js"></script>
@@ -19,6 +19,19 @@ path.state { fill: #eee; stroke: #aaa; }
 </head>
 <body>
 <h3>Project 2, wfq2, ab2466, jf586</h3>
+
+<form name="selection">
+	<input type="radio" name="airbnb_hotel" id="airbnb" value="airbnb" checked="checked"> Airbnb<br>
+	<input type="radio" name="airbnb_hotel" id"hotel" value="hotel"> Hotel <br> <br>
+
+ 	<input type="radio" name="meal_type" value="cheap" checked="checked"> Inexpensive Restaurant <br>
+ 	<input type="radio" name="meal_type" value="expensive"> Mid-range Restaurant <br><br>
+
+	<input type="radio" name="transit_type" value="public" checked="checked"> Public Transportation <br>
+	<input type="radio" name="transit_type" value="taxi" > Taxi <br>
+</form>
+
+
 <div id = "slider"></div>
 <svg height="600" width="900" id="svgMap" style="display:inline-block;"></svg>
 <div id="circle" style="display:inline-block"></div>
