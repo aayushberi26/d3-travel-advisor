@@ -312,7 +312,7 @@ function formatData(rawData, cityName, desiredFields) {
     })
     for (var i = 0; i < desiredFields.length; i ++) {
         var formattedData = {
-            "label": desiredFields[i],
+            "label": humanizeLabels(desiredFields[i]),
             "value": rawCity[desiredFields[i]],
             "color": color(desiredFields[i])
         };
@@ -412,7 +412,7 @@ function makePie(div, rawData, cityName, desiredFields) {
     "callbacks": {
         "onload": null,
         "onMouseoverSegment": function(info) {
-            document.getElementById("circleLabel").innerHTML = humanizeLabels(info["data"]["label"]) + ", $" + parseFloat(Math.round(Number(info["data"]["value"]) * 100) / 100).toFixed(2);
+            document.getElementById("circleLabel").innerHTML = info["data"]["label"] + ", $" + parseFloat(Math.round(Number(info["data"]["value"]) * 100) / 100).toFixed(2);
         },
         "onMouseoutSegment": function () {
             document.getElementById("circleLabel").innerHTML = " ";
@@ -428,8 +428,8 @@ function makePie(div, rawData, cityName, desiredFields) {
         .attr("style", "font-size: 14px;")
         .attr("text-anchor", "middle");
     svg.append("text")
-        .attr("x", "80")
-        .attr("y", "80")
+        .attr("x", "110")
+        .attr("y", "30")
         .attr("id", "totalCostLabel")
         .attr("style", "font-size: 18px;")
         .attr("text-anchor", "middle")
@@ -441,10 +441,11 @@ function makePie(div, rawData, cityName, desiredFields) {
 function plotCities(svg, variable = "totalCost") {
     // Text element for mouseover
     d3.select("#svgMap").append("text")
-    .attr("x", 15)
-    .attr("y", 20)
+    .attr("x", "50%")
+    .attr("y", 30)
+    .attr("text-anchor", "middle")
     .attr("id", "cityLabel")
-    .attr("style", "font-size: 18px");
+    .attr("style", "font-size: 27px");
 
     svg.append("text")
     .attr("id", "CityName")
@@ -462,9 +463,9 @@ function plotCities(svg, variable = "totalCost") {
     .attr("cx", function (city) { return projection([city.longitude, city.latitude])[0]; })
     .attr("cy", function (city) { return projection([city.longitude, city.latitude])[1]; })
     .attr("opacity", 0.7)
-    .attr("fill", "#48f")
+    .attr("fill", "#4169e1")
     .on("mouseover", function (city) {
-        document.getElementById("cityLabel").innerHTML = "Total cost to " + city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2);
+        document.getElementById("cityLabel").innerHTML = "Total cost for " + city.city + ": $" + parseFloat(Math.round(Number(city[variable]) * 100) / 100).toFixed(2);
         d3.selectAll('.cityname').text(city.city);
         updatePie(city.city);
         selectedCityName = city.city;
