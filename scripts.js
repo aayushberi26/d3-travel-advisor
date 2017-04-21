@@ -176,7 +176,7 @@ function makeBarChart(cities,attribute,elementid){
     .data(cities)
     .enter().append("g");
 
-    bar.append("rect").attr("fill", '#4169e1')
+    bar.append("rect").attr("fill", '#4169e1').attr("opacity", 0.8)
         .attr("transform", function(d, i) { return "translate(" + ((i * barWidth) + 64) + ",0)"; })
         .attr("y", function (d){return yScale(Number(d[attribute]))})
         .attr("width", barWidth - 2)
@@ -190,10 +190,10 @@ function makeBarChart(cities,attribute,elementid){
         });
 
     svg.append('line')
-    .attr('x1',64).attr('x2',274)
+    .attr('x1',60).attr('x2',274)
     .attr('y1',height-padding).attr('y2',height-padding)
-    .attr('stroke','black')
-    .attr('stroke-width',5);
+    .attr('stroke','#333')
+    .attr('stroke-width',3);
 
     if (attribute == "publicTransport") {
         var yAxis = d3.axisLeft(yScale).tickFormat(d3.format("$.2f"));
@@ -214,10 +214,10 @@ function humanizeLabels(label) {
             return "Airbnb (per night)";
             break;
         case 'cheapMeal':
-            return "Cheap meal";
+            return "Inexpensive meal";
             break;
         case 'expensiveMeal':
-            return "Expensive meal";
+            return "Mid-range meal";
             break;
         case 'hotel':
             return "Hotel (per night)";
@@ -240,16 +240,18 @@ function formatData(rawData, cityName, desiredFields) {
     var rawCity;
     var formattedCity = [];
     var color = d3.scaleOrdinal()
-        .range(['#7fc97f','#beaed4','#fdc086','#ffff99','#386cb0']);
+        .range(['#90323D','#beaed4','#FCC8B2','#6f8bdb','#386cb0']);
     rawData.forEach(function (d) {
         if(d.city == cityName) {
             rawCity = d;
         }
     })
     for (var i = 0; i < desiredFields.length; i ++) {
+
+
         var formattedData = {
-            "label": humanizeLabels(desiredFields[i]),
-            "value": rawCity[desiredFields[i]],
+            "label": pieLabels(desiredFields[i]),
+            "value": getScaledRate(desiredFields[i], rawCity[desiredFields[i]]),
             "color": color(desiredFields[i])
         };
         formattedCity.push(formattedData)
@@ -257,16 +259,70 @@ function formatData(rawData, cityName, desiredFields) {
     return formattedCity;
 }
 
+function pieLabels(label) {
+
+    switch(label) {
+        case 'airfare':
+            return "Roundtrip Airfare";
+            break;
+        case 'airbnb':
+            return "Airbnb (2 nights)";
+            break;
+        case 'cheapMeal':
+            return "Inexpensive meals";
+            break;
+        case 'expensiveMeal':
+            return "Mid-range meals";
+            break;
+        case 'hotel':
+            return "Hotel (2 nights)";
+            break;
+        case 'publicTransport':
+            return "Public Transport";
+            break;
+        case 'taxiCost':
+            return "Taxi Rides";
+            break;
+        default:
+            return " ";
+            break;
+    }
+}
+
+function getScaledRate(label, value) {
+    switch(label) {
+        case 'airfare':
+            return value*2;
+            break;
+        case 'airbnb':
+            return value*2;
+            break;
+        case 'cheapMeal':
+            return value*6;
+            break;
+        case 'expensiveMeal':
+            return value*6;
+            break;
+        case 'hotel':
+            return value*2;
+            break;
+        case 'publicTransport':
+            return value*12;
+            break;
+        case 'taxiCost':
+            return value*12;
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
+
 function makePie(div, rawData, cityName, desiredFields) {
     // code adapted from http://d3pie.org/
     document.getElementById(div).innerHTML = "";
     var pie = new d3pie(div, {
     "header": {
-        "title": {
-            "text": cityName,
-            "fontSize": 24,
-            "font": "open sans"
-        },
         "subtitle": {
             "text": "   ",
             "color": "#999999",
@@ -282,10 +338,10 @@ function makePie(div, rawData, cityName, desiredFields) {
         "location": "bottom-left"
     },
     "size": {
-        "canvasHeight": 450,
-        "canvasWidth": 700,
-        "pieInnerRadius": "50%",
-        "pieOuterRadius": "85%"
+        "canvasHeight": 400,
+        "canvasWidth": 575,
+        "pieInnerRadius": "55%",
+        "pieOuterRadius": "75%"
     },
     "data": {
         "sortOrder": "value-desc",
@@ -334,40 +390,48 @@ function makePie(div, rawData, cityName, desiredFields) {
     "callbacks": {
         "onload": null,
         "onMouseoverSegment": function(info) {
-            document.getElementById("circleLabel").innerHTML = info["data"]["label"] + ", $" + parseFloat(Math.round(Number(info["data"]["value"]) * 100) / 100).toFixed(2);
+            document.getElementById("circleLabel1").innerHTML = info["data"]["label"];
+            document.getElementById("circleLabel2").innerHTML = "$" + parseFloat(Math.round(Number(info["data"]["value"]) * 100) / 100).toFixed(2);
         },
         "onMouseoutSegment": function () {
-            document.getElementById("circleLabel").innerHTML = " ";
+            document.getElementById("circleLabel1").innerHTML = " ";
+            document.getElementById("circleLabel2").innerHTML = " ";
         },
         "onClickSegment": null
     }
     });
     var svg = d3.select("#circle_svg");
     svg.append("text")
-        .attr("x", "350")
-        .attr("y", "250")
-        .attr("id", "circleLabel")
+        .attr("x", "290")
+        .attr("y", "205")
+        .attr("id", "circleLabel1")
         .attr("style", "font-size: 14px;")
         .attr("text-anchor", "middle");
     svg.append("text")
-        .attr("x", "110")
-        .attr("y", "30")
-        .attr("id", "totalCostLabel")
-        .attr("style", "font-size: 18px;")
-        .attr("text-anchor", "middle")
-        .text("Total Cost: $" + getSingleCity(cityName).totalCost.toFixed(2));
+        .attr("x", "290")
+        .attr("y", "225")
+        .attr("id", "circleLabel2")
+        .attr("style", "font-size: 14px;")
+        .attr("text-anchor", "middle");
+    // svg.append("text")
+    //     .attr("x", "110")
+    //     .attr("y", "30")
+    //     .attr("id", "totalCostLabel")
+    //     .attr("style", "font-size: 18px;")
+    //     .attr("text-anchor", "middle")
+    //     .text("Total Cost: $" + getSingleCity(cityName).totalCost.toFixed(2));
 }; 
 
 
 // variable: string containing class property
 function plotCities(svg, variable = "totalCost") {
     // Text element for mouseover
-    d3.select("#svgMap").append("text")
-    .attr("x", "50%")
-    .attr("y", 30)
-    .attr("text-anchor", "middle")
-    .attr("id", "cityLabel")
-    .attr("style", "font-size: 27px");
+    // d3.select("#svgMap").append("text")
+    // .attr("x", "50%")
+    // .attr("y", 22)
+    // .attr("text-anchor", "middle")
+    // .attr("id", "cityLabel")
+    // .attr("style", "font-size: 27px");
 
     svg.append("text")
     .attr("id", "CityName")
@@ -405,12 +469,13 @@ function updatePie(city) {
 
 // modifies cityData, and sets all totalCost attributes based on user preference
 function calculateTotalCost(airbnb=true, cheapMeal=true, publicTransit=true) {
-    // 3 meals a day, 2 transit rides, 2 airfare flights?
+    // 2 meals a day, 4 transit rides, 2 airfare flights
+    // 3 day, 2 night trip
     cityData.forEach(function (d) {
         var cost = 2*d.airfare;
-        cost += airbnb? d.airbnb: d.hotel;
-        cost += cheapMeal? 3*d.cheapMeal: 3*d.expensiveMeal;
-        cost += publicTransit? 2*d.publicTransport: 2*d.taxiCost;
+        cost += airbnb? 2*d.airbnb: 2*d.hotel;
+        cost += cheapMeal? 6*d.cheapMeal: 6*d.expensiveMeal;
+        cost += publicTransit? 12*d.publicTransport: 12*d.taxiCost;
 
         d.totalCost = cost;
     });
@@ -431,14 +496,17 @@ function updateCityVisuals(city) {
     var name = city.city.replace(/ /g,'');
     d3.selectAll('circle').attr('fill','#4169e1');
     d3.selectAll('rect').attr('fill', '#4169e1');
-    d3.selectAll('.' + name).attr('fill','yellow');
+    d3.selectAll('.' + name).attr('fill','#b0ef7f');
 
     d3.selectAll('.bar1cityname').text(city.city + ": $" + city[bar1attr].toFixed(2));
     d3.selectAll('.bar2cityname').text(city.city + ": $" + city[bar2attr].toFixed(2));
     d3.selectAll('.bar3cityname').text(city.city + ": $" + city[bar3attr].toFixed(2));
     d3.selectAll('.bar4cityname').text(city.city + ": $" + city[bar4attr].toFixed(2));
 
-    document.getElementById("cityLabel").innerHTML = "Total cost for " + city.city + ": $" + parseFloat(Math.round(Number(city["totalCost"]) * 100) / 100).toFixed(2);
+    document.getElementById("totalLabel").innerHTML = "Total cost for " + city.city + ": $" + parseFloat(Math.round(Number(city["totalCost"]) * 100) / 100).toFixed(2);
+
+
+    // document.getElementById("cityLabel").innerHTML = "Total cost for " + city.city + ": $" + parseFloat(Math.round(Number(city["totalCost"]) * 100) / 100).toFixed(2);
     document.getElementById('cityselector').value = city.city;
     updatePie(city.city);
     selectedCityName = city.city;
