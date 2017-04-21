@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <style>
-body{font-family:lato;background-color: #e8f3fb;}
+body{font-family:lato;}
 path.state { fill: #ccc; stroke: #ccc; }
 input.slider { width: 600px; }
 rect.bar { fill: #4169e1; }
@@ -82,9 +82,16 @@ p {display:block;clear:both;font-size:20px;margin-left:50px;margin-right:50px;te
 </div>
 </div>
 
+<div class = "container-fluid">
+	<div class="col-lg-12">
+		<h1 id="totalLabel" style="text-align: center;"></h1>
+	</div>
+</div>
+
+
 <div class="container-fluid" style="margin-bottom: -55px;">
     <div class="col-lg-6">
-        <svg height="400" width="525" id="svgMap" style="display:inline-block;"></svg>
+        <svg height="360" width="575" id="svgMap" style="display:inline-block;"></svg>
     </div>
     <div class = "col-lg-5">
         <div id="circle" style="display:inline-block"></div>
